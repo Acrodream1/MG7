@@ -6,6 +6,8 @@ public class Bird : MonoBehaviour
     [SerializeField] private float _popUpSpeed = 5.0f;
     [SerializeField] private Player _player;
 
+    private Vector3 _originalPosition;
+
     private bool _doPopUpAnimation;
     private float _popUpTimeRemaining;
 
@@ -25,7 +27,8 @@ public class Bird : MonoBehaviour
     //      coded! :)
     private void OnEnable()
     {
-        
+        _popUpTimeRemaining = _popUpTime;
+        _doPopUpAnimation = true;
     }
     // STEP 2 -----------------------------------------------------------------
 
@@ -35,6 +38,16 @@ public class Bird : MonoBehaviour
         // Update your timer, and if the bird should still be animating,
         //      move it upwards with Translate.
 
+        _popUpTimeRemaining = Mathf.Clamp(_popUpTimeRemaining - Time.deltaTime, 0.0f, _popUpTime);
+
+        if (_popUpTimeRemaining == 0.0f)
+        {
+            _doPopUpAnimation = false;
+        }
+
+        if (_doPopUpAnimation) {
+            transform.Translate(_popUpSpeed * Time.deltaTime * transform.up, Space.World); // Using Space.World fixes movement issues
+        }
 
         // STEP 3 -------------------------------------------------------------
 
@@ -47,7 +60,10 @@ public class Bird : MonoBehaviour
         //      with the Transform.LookAt() method:
         //      https://docs.unity3d.com/6000.2/Documentation/ScriptReference/Transform.LookAt.html
         
-
+        if (_player._isHoldingSeed)
+        {
+            transform.LookAt(_player.transform);
+        }
 
         // STEP 6 -------------------------------------------------------------
     }

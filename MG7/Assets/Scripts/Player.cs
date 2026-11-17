@@ -19,7 +19,7 @@ public class Player : MonoBehaviour
     private Collider _seedCollider;
 
     // ------------------------------------------------------------------------
-    private void Start ()
+    private void Start()
     {
         _cameraTrans = Camera.main.transform;
         Cursor.lockState = CursorLockMode.Locked;
@@ -44,7 +44,7 @@ public class Player : MonoBehaviour
     }
 
     // ------------------------------------------------------------------------
-    private void SpawnSeed ()
+    private void SpawnSeed()
     {
         _isHoldingSeed = true;
 
@@ -52,7 +52,7 @@ public class Player : MonoBehaviour
         // Fix this line so that the Player GameObject is the PARENT of the seed.
         // That way, the seed will move with the player.
 
-        GameObject seed = Instantiate(_seedPrefab);
+        GameObject seed = Instantiate(_seedPrefab, gameObject.transform);
 
         // STEP 4 -------------------------------------------------------------
 
@@ -67,12 +67,17 @@ public class Player : MonoBehaviour
         //      left and slightly above the player.
         // You will probably also need Transform.TransformDirection() ;)
 
-        
+        seed.transform.position = seed.transform.position
+            +
+            seed.transform.TransformDirection(Vector3.left * _spawnLeft)   // Move the seed left relative to the seed
+            +
+            seed.transform.TransformDirection(Vector3.up * _spawnUp);      // Move the seed up relative to the seed
+
         // STEP 5 -------------------------------------------------------------
     }
-    
+
     // ------------------------------------------------------------------------
-    private void ThrowSeed ()
+    private void ThrowSeed()
     {
         _isHoldingSeed = false;
         _seedRB.isKinematic = false;
@@ -90,8 +95,8 @@ public class Player : MonoBehaviour
 
         // STEP 7 -------------------------------------------------------------
         // Set the animation parameters to play the throwing animation.
-        
 
+        _animator.SetTrigger("Attack");     // This section alone took around 30 minutes of research on animation :skull:
 
         // STEP 7 -------------------------------------------------------------
     }
@@ -120,7 +125,14 @@ public class Player : MonoBehaviour
         // Set the animation parameters to play the walking animation.
         // You might need the mouseY, mouseX, vertical, and horizontal variables
         //      that are above this step :)
-
+        Debug.Log(mouseX);
+        if (Mathf.Abs(horizontal) > 0.0f || Mathf.Abs(vertical) > 0.0f || Mathf.Abs(mouseX) > 0.0f || Mathf.Abs(mouseY) > 0.0f)
+        {
+            _animator.SetBool("Walk", true);
+        } else
+        {
+            _animator.SetBool("Walk", false);
+        }
 
         // STEP 8 -------------------------------------------------------------
     }
